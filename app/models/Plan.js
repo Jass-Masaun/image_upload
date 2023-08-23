@@ -1,0 +1,42 @@
+const mongoose = require("mongoose");
+
+const planSchema = mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: [true, "User id is required"],
+    },
+    plan_id: {
+      type: String,
+      required: [true, "Plan id is required"],
+    },
+    subscription_id: {
+      type: String,
+      required: [true, "Subscription id is required"],
+    },
+    name: {
+      type: String,
+      required: [true, "Plan name is required"],
+    },
+    amount: {
+      type: Number,
+      required: [true, "Plan amount is required"],
+    },
+    current: {
+      type: Boolean,
+    },
+    is_cancelled: {
+      type: Boolean,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const Plan = mongoose.model("Plan", planSchema);
+
+module.exports = {
+  Plan,
+};
