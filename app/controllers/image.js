@@ -101,4 +101,5 @@ module.exports = {
   storeImage,
   downloadImage,
   viewImage,
+  getAllImages,
 };
