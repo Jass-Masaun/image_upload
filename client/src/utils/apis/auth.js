@@ -28,7 +28,10 @@ const loginUser = async (payload) => {
     const responseMessage = response?.data?.message;
     if (responseStatusCode === 200 || responseStatusCode === 201) {
       alert(responseMessage);
-      window?.localStorage?.setItem(ACCESS_TOKEN_KEY, response.data.data);
+      window?.localStorage?.setItem(
+        ACCESS_TOKEN_KEY,
+        response?.data?.data?.accessToken
+      );
       window.location.href = "/dashboard";
       return true;
     } else {

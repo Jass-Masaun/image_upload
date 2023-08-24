@@ -8,6 +8,6 @@ const { verifyToken } = require("../middlewares/jwt");
 router.post("/store", verifyToken, uploadImage, _controller.storeImage);
 router.get("/download", _controller.downloadImage);
 router.get("/view", _controller.viewImage);
-router.get("/all", _controller.getAllImages);
+router.get("/all", verifyToken, _controller.getAllImages);
 
 module.exports = router;

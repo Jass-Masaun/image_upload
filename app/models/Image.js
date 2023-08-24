@@ -23,6 +23,10 @@ const imageSchema = mongoose.Schema(
       type: Buffer,
       required: [true, "Buffer is required"],
     },
+    thumbnail: {
+      type: Buffer,
+      required: [true, "Thumbnail is required"],
+    },
   },
   {
     timestamps: true,
