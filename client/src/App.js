@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import UserDetails from "./pages/User";
 
 const App = () => {
   return (
@@ -23,6 +24,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute>
+                <UserDetails />
               </ProtectedRoute>
             }
           />

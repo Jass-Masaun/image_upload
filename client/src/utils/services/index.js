@@ -22,9 +22,9 @@ axiosClient.interceptors.request.use((config) => {
   return Promise.resolve(config);
 });
 
-const postData = async (endpoint, payload) => {
+const getData = async (endpoint) => {
   try {
-    const response = await axiosClient.post(endpoint, payload);
+    const response = await axiosClient.get(endpoint);
     return response;
   } catch (error) {
     if (error?.response?.status === 401) {
@@ -36,4 +36,22 @@ const postData = async (endpoint, payload) => {
   }
 };
 
-export { postData };
+const postData = async (endpoint, payload, headers) => {
+  try {
+    headers = headers || {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    };
+    const response = await axiosClient.post(endpoint, payload, headers);
+    return response;
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      window?.localStorage?.removeItem(ACCESS_TOKEN_KEY);
+      window.location.href = "/login";
+    }
+
+    return error.response;
+  }
+};
+
+export { getData, postData };

@@ -15,6 +15,15 @@ const planSchema = mongoose.Schema(
       type: String,
       required: [true, "Subscription id is required"],
     },
+    payment_id: {
+      type: String,
+    },
+    payment_status: {
+      type: String,
+    },
+    client_secret: {
+      type: String,
+    },
     name: {
       type: String,
       required: [true, "Plan name is required"],

@@ -8,8 +8,12 @@ const { HttpSuccess, HttpError } = require("../handlers/apiResponse");
 const { formatUSD } = require("../utils/currency");
 const { errors } = require("../handlers/errors");
 
+const { WEBHOOK_SECRET } = process.env;
+
 const getAllPlans = async (req, res, next) => {
   try {
+    const { id } = req.user;
+
     const products = await Promise.all([
       stripe.products.list({}),
       stripe.plans.list({}),
@@ -35,7 +39,40 @@ const getAllPlans = async (req, res, next) => {
       return products;
     });
 
-    const response = new HttpSuccess("Stripe plans", products);
+    const plan = await Plan.findOne({
+      user: id,
+      current: true,
+    });
+
+    let plans = [];
+
+    if (plan?.plan_id) {
+      plans = products.map((product) => {
+        const { name, plans } = product;
+        return {
+          id: plans[0].id,
+          name: name,
+          amount: plans[0].amount,
+          currency: plans[0].currency,
+          interval: plans[0].interval,
+          selected: plan.plan_id === plans[0].id ? true : false,
+        };
+      });
+    } else {
+      plans = products.map((product) => {
+        const { name, plans } = product;
+        return {
+          id: plans[0].id,
+          name: name,
+          amount: plans[0].amount,
+          currency: plans[0].currency,
+          interval: plans[0].interval,
+          selected: plans[0].amount_decimal === "0" ? true : false,
+        };
+      });
+    }
+
+    const response = new HttpSuccess("Stripe plans", { plans });
     res.status(response.status_code).json(response);
   } catch (error) {
     next(error);
@@ -44,8 +81,8 @@ const getAllPlans = async (req, res, next) => {
 
 const subscribePlan = async (req, res, next) => {
   try {
-    const { id, email } = req.user;
-    const { planId, stripeToken } = req.body;
+    const { id, email, name } = req.user;
+    const { planId, stripeToken, address } = req.body;
 
     const planDetails = await getPlanById(planId);
     const planName = planDetails.product.name;
@@ -54,6 +91,8 @@ const subscribePlan = async (req, res, next) => {
     const { customerId, alreadyExists } = await createCustomer({
       userId: id,
       email,
+      name,
+      address,
       stripeToken,
     });
 
@@ -70,6 +109,7 @@ const subscribePlan = async (req, res, next) => {
           plan: planId,
         },
       ],
+      expand: ["latest_invoice.payment_intent"],
     });
 
     await Plan.updateMany({ user: id }, { $set: { current: false } });
@@ -80,23 +120,24 @@ const subscribePlan = async (req, res, next) => {
       name: planName,
       amount: planAmount,
       subscription_id: subscription.id,
+      payment_status: "pending",
       current: true,
+      client_secret: subscription.latest_invoice.payment_intent.client_secret,
     });
 
     await plan.save();
 
     if (planAmount === 500) {
-      await User.findByIdAndUpdate(id, { tier: "Monthly" });
+      await User.findByIdAndUpdate(id, { tier: "monthly" });
     }
 
     if (planAmount === 0) {
-      await User.findByIdAndUpdate(id, { tier: "Free" });
+      await User.findByIdAndUpdate(id, { tier: "free" });
     }
 
-    const response = new HttpSuccess(
-      "Plan subscribed successfully",
-      subscription
-    );
+    const response = new HttpSuccess("Plan subscribed successfully", {
+      client_secret: subscription.latest_invoice.payment_intent.client_secret,
+    });
     res.status(response.status_code).json(response);
   } catch (error) {
     next(error);
@@ -106,26 +147,26 @@ const subscribePlan = async (req, res, next) => {
 const cancelSubscription = async (req, res, next) => {
   try {
     const { id } = req.user;
-    const { subscription_id, plan_id } = req.body;
+    const { plan_id } = req.body;
 
     const plan = await Plan.findOne({
       user: id,
       plan_id,
-      subscription_id,
+      current: true,
     });
-
-    plan.current = false;
-    plan.is_cancelled = true;
-    await plan.save();
 
     if (!plan) {
       const { name, code } = errors[400];
       throw new HttpError("User not subscribed to this plan", name, [], code);
     }
 
-    await User.findByIdAndUpdate(id, { tier: "Free" });
+    plan.current = false;
+    plan.is_cancelled = true;
+    await plan.save();
 
-    await stripe.subscriptions.cancel(subscription_id);
+    await User.findByIdAndUpdate(id, { tier: "free" });
+
+    await stripe.subscriptions.cancel(plan.subscription_id);
 
     const response = new HttpSuccess("User unsubscribed to plan", null);
     res.status(response.status_code).json(response);
@@ -147,9 +188,64 @@ const getSubscriptionStatus = async (req, res, next) => {
   }
 };
 
+const webhook = async (req, res, next) => {
+  const payload = req.body;
+  const signature = req.headers["stripe-signature"];
+
+  try {
+    // const event = stripe.webhooks.constructEvent(
+    //   payload,
+    //   signature,
+    //   WEBHOOK_SECRET
+    // );
+
+    // console.log(JSON.stringify(event));
+
+    // Handle different event types
+    switch (payload.type) {
+      case "payment_intent.succeeded":
+        const paymentIntent = payload.data.object;
+        const clientSecret = payload.data.object.client_secret;
+
+        const plan = await Plan.findOne({
+          client_secret: clientSecret,
+          current: true,
+        });
+
+        plan.payment_id = paymentIntent.id;
+        plan.payment_status = "success";
+
+        await plan.save();
+        break;
+      case "payment_intent.payment_failed":
+        const paymentIntentt = payload.data.object;
+        const clientSecrett = payload.data.object.client_secret;
+
+        const plann = await Plan.findOne({
+          client_secret: clientSecrett,
+          current: true,
+        });
+
+        plann.payment_id = paymentIntentt.id;
+        plann.payment_status = "success";
+
+        await plann.save();
+        break;
+      default:
+        // Unexpected payload type
+        console.log("Unexpected payload type:", payload.type);
+    }
+
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPlans,
   subscribePlan,
   cancelSubscription,
   getSubscriptionStatus,
+  webhook,
 };

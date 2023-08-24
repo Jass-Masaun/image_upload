@@ -16,6 +16,8 @@ const createCustomer = async (requestBody) => {
   const customer = await stripe.customers.create({
     source: requestBody.stripeToken,
     email: requestBody.email,
+    name: requestBody.name,
+    address: requestBody.address,
   });
 
   return {
