@@ -10,7 +10,7 @@ const generateToken = (user) => {
       email: user.email,
     },
     JWT_ACCESS_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "30d" }
   );
 
   const refreshToken = jwt.sign(
@@ -20,7 +20,7 @@ const generateToken = (user) => {
       email: user.email,
     },
     JWT_REFRESH_SECRET,
-    { expiresIn: "30d" }
+    { expiresIn: "90d" }
   );
 
   return {

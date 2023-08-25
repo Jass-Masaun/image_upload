@@ -57,7 +57,7 @@ const getAllPlans = async (req, res, next) => {
           interval: plans[0].interval,
           selected: plan.plan_id === plans[0].id ? true : false,
           benefits:
-            plans[0].amount === "0.0"
+            plans[0].amount_decimal === "0"
               ? [
                   "You can upload only single image at a time",
                   "You can upload only on image/hour",
@@ -79,7 +79,7 @@ const getAllPlans = async (req, res, next) => {
           interval: plans[0].interval,
           selected: plans[0].amount_decimal === "0" ? true : false,
           benefits:
-            plans[0].amount === "0.0"
+            plans[0].amount_decimal === "0"
               ? [
                   "You can upload only single image at a time",
                   "You can upload only on image/hour",

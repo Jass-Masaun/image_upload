@@ -123,7 +123,7 @@ const Dashboard = () => {
 
           {showUploadingStatus && (
             <label className="block text-gray-700 mb-2">
-              Your image{isMultiple ? "s are" : "is"} uplaoding please wait...
+              Your image{isMultiple ? "s are" : "is"} uploading please wait...
             </label>
           )}
 
