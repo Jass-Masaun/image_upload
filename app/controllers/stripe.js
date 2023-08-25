@@ -127,14 +127,6 @@ const subscribePlan = async (req, res, next) => {
 
     await plan.save();
 
-    if (planAmount === 500) {
-      await User.findByIdAndUpdate(id, { tier: "monthly" });
-    }
-
-    if (planAmount === 0) {
-      await User.findByIdAndUpdate(id, { tier: "free" });
-    }
-
     const response = new HttpSuccess("Plan subscribed successfully", {
       client_secret: subscription.latest_invoice.payment_intent.client_secret,
     });
@@ -216,6 +208,14 @@ const webhook = async (req, res, next) => {
         plan.payment_status = "success";
 
         await plan.save();
+
+        if (plan.amount === 500) {
+          await User.findByIdAndUpdate(plan.user, { tier: "monthly" });
+        }
+
+        if (plan.amount === 0) {
+          await User.findByIdAndUpdate(plan.user, { tier: "free" });
+        }
         break;
       case "payment_intent.payment_failed":
         const paymentIntentt = payload.data.object;
@@ -227,9 +227,12 @@ const webhook = async (req, res, next) => {
         });
 
         plann.payment_id = paymentIntentt.id;
-        plann.payment_status = "success";
+        plann.payment_status = "failed";
+        plann.current = false;
 
         await plann.save();
+
+        await stripe.subscriptions.cancel(plann.subscription_id);
         break;
       default:
         // Unexpected payload type

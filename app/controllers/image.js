@@ -1,43 +1,9 @@
-const sharp = require("sharp");
-
-const generateThumbnailBuffer = async (
-  inputBuffer,
-  maxWidth,
-  maxHeight,
-  maxFileSize
-) => {
-  let minQuality = 1; // Minimum quality value
-  let maxQuality = 100; // Maximum quality value
-  let thumbnailQuality = Math.floor((minQuality + maxQuality) / 2);
-
-  let thumbnailBuffer = null;
-  while (minQuality <= maxQuality) {
-    const resizedImage = await sharp(inputBuffer)
-      .resize(maxWidth, maxHeight, { fit: "inside", withoutEnlargement: true })
-      .jpeg({ quality: thumbnailQuality })
-      .toBuffer();
-
-    if (resizedImage.length <= maxFileSize * 1024) {
-      thumbnailBuffer = resizedImage;
-      break;
-    } else {
-      if (resizedImage.length > maxFileSize * 1024) {
-        maxQuality = thumbnailQuality - 1;
-      } else {
-        minQuality = thumbnailQuality + 1;
-      }
-      thumbnailQuality = Math.floor((minQuality + maxQuality) / 2);
-    }
-  }
-
-  return thumbnailBuffer;
-};
-
 const { Image } = require("../models");
 
 const { HttpSuccess, HttpError } = require("../handlers/apiResponse");
 const { errors } = require("../handlers/errors");
 const { handleFreeTrierImageUploadCondition } = require("../services/image");
+const { generateThumbnailBuffer } = require("../services/sharp");
 
 const { DOMAIN } = process.env;
 
@@ -55,12 +21,7 @@ const storeImage = async (req, res, next) => {
     req.files.map(async (obj, index) => {
       const { mimetype, buffer, originalname, size } = obj;
 
-      const thumbnailBuffer = await generateThumbnailBuffer(
-        buffer,
-        200,
-        150,
-        100
-      );
+      const thumbnailBuffer = await generateThumbnailBuffer(buffer);
 
       imagesToUpload.push({
         user: req.user.id,
@@ -119,7 +80,7 @@ const viewImage = async (req, res, next) => {
       throw new HttpError("Image not found", name, [], code);
     }
 
-    const image = await Image.findById(id);
+    const image = await Image.findById(id, { thumbnail: 1, mimetype: 1 });
 
     if (!image) {
       const { name, code } = errors[404];
@@ -127,7 +88,8 @@ const viewImage = async (req, res, next) => {
     }
 
     res.setHeader("Content-Type", image.mimetype);
-    res.send(type === "thumbnail" ? image.thumbnail : image.buffer);
+    // res.send(type === "thumbnail" ? image.thumbnail : image.buffer);
+    res.send(image.thumbnail);
   } catch (error) {
     next(error);
   }
@@ -137,9 +99,12 @@ const getAllImages = async (req, res, next) => {
   try {
     const { id } = req.user;
 
-    const images = await Image.find({
-      user: id,
-    });
+    const images = await Image.find(
+      {
+        user: id,
+      },
+      { _id: 1, name: 1, size: 1, mimetype: 1, createdAt: 1 }
+    );
 
     const result = images.map((image) => {
       const { _id, name, size, mimetype, createdAt } = image;

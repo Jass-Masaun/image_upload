@@ -1,7 +1,10 @@
-const { User } = require("../models");
+const { User, BillingDetail } = require("../models");
 
 const getUserDetailsById = async (userId) => {
   const user = await User.findById(userId);
+  const billingDetails = await BillingDetail.findOne({
+    user: user._id,
+  });
 
   return {
     id: user._id,
@@ -10,6 +13,7 @@ const getUserDetailsById = async (userId) => {
     tier: user.tier,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+    address: billingDetails || {},
   };
 };
 

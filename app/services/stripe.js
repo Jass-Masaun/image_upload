@@ -1,12 +1,31 @@
 const { stripe } = require("../config/stripe");
 const { HttpError } = require("../handlers/apiResponse");
 const { errors } = require("../handlers/errors");
-const { User } = require("../models");
+const { User, BillingDetail } = require("../models");
 
 const createCustomer = async (requestBody) => {
   const user = await User.findById(requestBody.userId);
+  const billingDetails = await BillingDetail.findOne({
+    user: user._id,
+  });
+
+  if (billingDetails) {
+    await BillingDetail.findByIdAndUpdate(billingDetails._id, {
+      ...requestBody.address,
+    });
+  } else {
+    const details = new BillingDetail({
+      user: user._id,
+      ...requestBody.address,
+    });
+    await details.save();
+  }
 
   if (user?.stripe_customer_id) {
+    await stripe.customers.update(user.stripe_customer_id, {
+      address: requestBody.address,
+    });
+
     return {
       customerId: user.stripe_customer_id,
       alreadyExists: true,

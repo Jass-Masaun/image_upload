@@ -58,18 +58,27 @@ const PaymentForm = ({ planDetails, userDetails }) => {
     } catch (err) {
       console.error(err);
       alert("Payment failed! " + err.message);
+    } finally {
+      window.location.reload();
     }
   };
 
   const cancelSubscription = async (e) => {
-    e.preventDefault();
-    const response = await cancelSubscriptionToPlan({
-      plan_id: planDetails.user_subscribed_plan_id,
-    });
-    if (!response) {
-      return alert("Error cancelling subscription!");
-    } else {
-      alert("Subscription cancelled successfully");
+    try {
+      e.preventDefault();
+      const response = await cancelSubscriptionToPlan({
+        plan_id: planDetails.user_subscribed_plan_id,
+      });
+      if (!response) {
+        return alert("Error cancelling subscription!");
+      } else {
+        alert("Subscription cancelled successfully");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Subscription cancellation failed! " + error.message);
+    } finally {
+      window.location.reload();
     }
   };
 
@@ -121,6 +130,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
               type="text"
               name="address_line1"
               placeholder="Address Line 1"
+              value={userDetails.address.line1}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -130,6 +140,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
               type="text"
               name="address_city"
               placeholder="City"
+              value={userDetails.address.city}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -139,6 +150,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
               type="text"
               name="address_state"
               placeholder="State"
+              value={userDetails.address.state}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -148,6 +160,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
               type="text"
               name="address_country"
               placeholder="Country"
+              value={userDetails.address.country}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -157,6 +170,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
               type="text"
               name="address_postal_code"
               placeholder="Postal Code"
+              value={userDetails.address.postal_code}
               className="w-full p-2 border rounded-lg"
               required
             />
