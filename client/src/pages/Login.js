@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
 import { useAuth } from "../contexts/Auth";
-import { loginUser } from "../utils/apis/auth";
+import { loginUser, verifyCaptcha } from "../utils/apis/auth";
 import { ACCESS_TOKEN_KEY } from "../utils/constants";
 
 const Login = () => {
@@ -23,22 +23,26 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (isCaptchaVerified) {
-    const result = await loginUser({
-      email,
-      password,
-    });
+    if (isCaptchaVerified) {
+      const result = await loginUser({
+        email,
+        password,
+      });
 
-    if (result) {
-      setAuthenticated(true);
+      if (result) {
+        setAuthenticated(true);
+      }
+    } else {
+      alert("Please complete the CAPTCHA.");
     }
-    // } else {
-    //   alert("Please complete the CAPTCHA.");
-    // }
   };
 
-  const handleCaptchaVerify = () => {
-    setIsCaptchaVerified(true);
+  const handleCaptchaVerify = async (token) => {
+    const result = await verifyCaptcha({ token });
+
+    if (result) {
+      setIsCaptchaVerified(true);
+    }
   };
 
   return (
@@ -101,10 +105,10 @@ const Login = () => {
               </div>
             </div>
 
-            {/* <ReCAPTCHA
-              sitekey="YOUR_RECAPTCHA_SITE_KEY"
+            <ReCAPTCHA
+              sitekey="6Ld889MnAAAAAMg9nUZM1O9thtLa69t7j_faPJGg"
               onChange={handleCaptchaVerify}
-            /> */}
+            />
 
             <div>
               <button

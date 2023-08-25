@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { ACCESS_TOKEN_KEY } from "../utils/constants";
-import { createUser } from "../utils/apis/auth";
+import { createUser, verifyCaptcha } from "../utils/apis/auth";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   useEffect(() => {
     const token = window.localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -19,54 +21,25 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await createUser({
-      full_name: fullName,
-      email,
-      password,
-    });
+    if (isCaptchaVerified) {
+      await createUser({
+        full_name: fullName,
+        email,
+        password,
+      });
+    } else {
+      alert("Please complete the CAPTCHA.");
+    }
   };
 
-  // return (
-  //   <div>
-  //     <h2>Sign Up</h2>
-  //     <form onSubmit={handleSubmit}>
-  //       <div>
-  //         <label htmlFor="fullName">Full Name</label>
-  //         <input
-  //           type="text"
-  //           id="fullName"
-  //           value={fullName}
-  //           onChange={(e) => setFullName(e.target.value)}
-  //           placeholder="Enter your full name"
-  //           required
-  //         />
-  //       </div>
-  //       <div>
-  //         <label htmlFor="email">Email</label>
-  //         <input
-  //           type="email"
-  //           id="email"
-  //           value={email}
-  //           onChange={(e) => setEmail(e.target.value)}
-  //           placeholder="Enter your email"
-  //           required
-  //         />
-  //       </div>
-  //       <div>
-  //         <label htmlFor="password">Password</label>
-  //         <input
-  //           type="password"
-  //           id="password"
-  //           value={password}
-  //           onChange={(e) => setPassword(e.target.value)}
-  //           placeholder="Enter your password"
-  //           required
-  //         />
-  //       </div>
-  //       <button type="submit">Sign Up</button>
-  //     </form>
-  //   </div>
-  // );
+  const handleCaptchaVerify = async (token) => {
+    const result = await verifyCaptcha({ token });
+
+    if (result) {
+      setIsCaptchaVerified(true);
+    }
+  };
+
   return (
     <>
       <div className="flex h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-gray-100">
@@ -146,6 +119,11 @@ const SignUp = () => {
                 />
               </div>
             </div>
+
+            <ReCAPTCHA
+              sitekey="6Ld889MnAAAAAMg9nUZM1O9thtLa69t7j_faPJGg"
+              onChange={handleCaptchaVerify}
+            />
 
             <div>
               <button

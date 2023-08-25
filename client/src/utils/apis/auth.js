@@ -44,4 +44,22 @@ const loginUser = async (payload) => {
   }
 };
 
-export { createUser, loginUser };
+const verifyCaptcha = async (payload) => {
+  try {
+    const response = await postData("/auth/verify-captcha", payload);
+    const responseStatusCode = response?.data?.status_code;
+    const responseMessage = response?.data?.message;
+    if (responseStatusCode === 200 || responseStatusCode === 201) {
+      return true;
+    } else {
+      alert(responseMessage);
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+    alert("unknown error occured while login");
+    return false;
+  }
+};
+
+export { createUser, loginUser, verifyCaptcha };
