@@ -60,11 +60,11 @@ const getAllPlans = async (req, res, next) => {
             plans[0].amount_decimal === "0"
               ? [
                   "You can upload only single image at a time",
-                  "You can upload only on image/hour",
+                  "You can upload only one image/hour",
                 ]
               : [
                   "You can upload multiple images at a time",
-                  "There is no image/hour restriction",
+                  "There is no one image/hour restriction",
                 ],
         };
       });
@@ -82,11 +82,11 @@ const getAllPlans = async (req, res, next) => {
             plans[0].amount_decimal === "0"
               ? [
                   "You can upload only single image at a time",
-                  "You can upload only on image/hour",
+                  "You can upload only one image/hour",
                 ]
               : [
                   "You can upload multiple images at a time",
-                  "There is no image/hour restriction",
+                  "There is no one image/hour restriction",
                 ],
         };
       });
