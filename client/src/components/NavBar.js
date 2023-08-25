@@ -9,12 +9,19 @@ const NavBar = ({ buttons }) => {
     window.location.href = "/login";
   };
 
+  const handleDashboard = async () => {
+    window.location.href = "/dashboard";
+  };
+
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/dashboard" className="text-white text-xl font-bold">
+        <button
+          className="text-white text-xl font-bold"
+          onClick={handleDashboard}
+        >
           Dashboard
-        </Link>
+        </button>
         <div className="flex items-center space-x-4">
           {buttons.map((button) => (
             <button className="text-white" onClick={button.handleClick}>

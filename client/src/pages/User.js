@@ -37,10 +37,6 @@ const UserDetails = () => {
     });
   }, []);
 
-  const handleDashboard = async () => {
-    window.location.href = "/dashboard";
-  };
-
   const handleSelectPlan = (planId) => {
     setSelectedPlan(planId);
 
@@ -59,7 +55,7 @@ const UserDetails = () => {
 
   return (
     <>
-      <NavBar buttons={[{ name: "Dashboard", handleClick: handleDashboard }]} />
+      <NavBar buttons={[]} />
 
       {userPlanDetails.id ? (
         <>
@@ -68,12 +64,12 @@ const UserDetails = () => {
               <h3 className="text-lg font-semibold mb-2 text-gray-800">
                 User Information
               </h3>
-              <div className="grid grid-cols-2 gap-2 text-gray-700">
-                <div className="flex items-center">
+              <div className="flex flex-col text-gray-700">
+                <div>
                   <span className="text-gray-600 mr-2">Name:</span>
                   {userDetails.fullName}
                 </div>
-                <div className="flex items-center">
+                <div>
                   <span className="text-gray-600 mr-2">Email:</span>
                   {userDetails.email}
                 </div>

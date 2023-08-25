@@ -16,6 +16,9 @@ const Dashboard = () => {
   const [isMultiple, setIsMultiple] = useState(false);
   const [uploadImageVisibility, setUploadImageVisibility] = useState(false);
   const [uploadButtonVisibility, setUploadButtonVisibility] = useState(true);
+  const [apiLoading, setApiLoading] = useState(true);
+  const [uploadButtonDisabled, setUploadButtonDisabled] = useState(false);
+  const [showUploadingStatus, setShowUploadingStatus] = useState(false);
 
   useEffect(async () => {
     const imagesArr = await getAllImages();
@@ -26,6 +29,7 @@ const Dashboard = () => {
     }
     // setUserDetails(userD);
     setImages(imagesArr);
+    setApiLoading(false);
   }, []);
 
   const handleLogout = () => {
@@ -45,6 +49,9 @@ const Dashboard = () => {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
+
+      setUploadButtonDisabled(true);
+      setShowUploadingStatus(true);
 
       const file = event.currentTarget["images"].files[0];
       let files = [file];
@@ -66,7 +73,7 @@ const Dashboard = () => {
         buttons={[{ name: "User Profile", handleClick: handleUserProfile }]}
       />
 
-      {images.length ? (
+      {!apiLoading ? (
         <div className="container mx-auto p-4">
           {uploadButtonVisibility && (
             <button
@@ -106,11 +113,18 @@ const Dashboard = () => {
                 <button
                   type="submit"
                   className="bg-gray-800 text-white py-2 px-4 rounded-lg mt-4 hover:bg-gray-700 transition duration-300 ease-in-out"
+                  disabled={uploadButtonDisabled}
                 >
                   Upload
                 </button>
               </form>
             </div>
+          )}
+
+          {showUploadingStatus && (
+            <label className="block text-gray-700 mb-2">
+              Your image{isMultiple ? "s are" : "is"} uplaoding please wait...
+            </label>
           )}
 
           <ImageView images={images} />
