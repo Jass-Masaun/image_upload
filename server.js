@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
 
 const routes = require("./app/routes");
 const { errorHandler } = require("./app/handlers/errorHandler");
@@ -9,6 +11,8 @@ const app = express();
 
 connectDb();
 
+app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use("/api/v1", routes);
 
