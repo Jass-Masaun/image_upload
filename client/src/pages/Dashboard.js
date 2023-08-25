@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [apiLoading, setApiLoading] = useState(true);
   const [uploadButtonDisabled, setUploadButtonDisabled] = useState(false);
   const [showUploadingStatus, setShowUploadingStatus] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
 
   useEffect(async () => {
     const imagesArr = await getAllImages();
@@ -32,9 +33,10 @@ const Dashboard = () => {
     setApiLoading(false);
   }, []);
 
-  const handleLogout = () => {
-    window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-    window.location.href = "/login";
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const imageUrls = files.map((file) => URL.createObjectURL(file));
+    setSelectedImages(imageUrls);
   };
 
   const handleUserProfile = async () => {
@@ -85,14 +87,14 @@ const Dashboard = () => {
             </button>
           )}
           {uploadImageVisibility && (
-            <div>
+            <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold mb-4 text-gray-900">
                 Upload Image{isMultiple ? "(s)" : ""}
               </h2>
 
               <form onSubmit={handleSubmit} className="mb-8">
                 <label className="block text-gray-700 mb-2">
-                  Select Image{isMultiple ? "(s)" : ""}:
+                  Select Image{isMultiple ? "(s)" : ""}
                 </label>
                 <div className="flex items-center space-x-4">
                   <input
@@ -102,6 +104,8 @@ const Dashboard = () => {
                     className="hidden"
                     id="imageUpload"
                     multiple={isMultiple}
+                    onChange={handleImageChange}
+                    disabled={uploadButtonDisabled}
                   />
                   <label
                     htmlFor="imageUpload"
@@ -110,6 +114,23 @@ const Dashboard = () => {
                     Choose Image{isMultiple ? "s" : ""}
                   </label>
                 </div>
+                {selectedImages.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                      Selected Image{isMultiple ? "s" : ""} Preview:
+                    </h3>
+                    <div className="flex space-x-4">
+                      {selectedImages.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Selected Preview ${index + 1}`}
+                          className="w-32 h-32 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <button
                   type="submit"
                   className="bg-gray-800 text-white py-2 px-4 rounded-lg mt-4 hover:bg-gray-700 transition duration-300 ease-in-out"

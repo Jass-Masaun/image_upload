@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { useAuth } from "../contexts/Auth";
 import { loginUser } from "../utils/apis/auth";
@@ -7,6 +8,7 @@ import { ACCESS_TOKEN_KEY } from "../utils/constants";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const { setAuthenticated } = useAuth();
 
@@ -21,6 +23,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // if (isCaptchaVerified) {
     const result = await loginUser({
       email,
       password,
@@ -29,7 +32,15 @@ const Login = () => {
     if (result) {
       setAuthenticated(true);
     }
+    // } else {
+    //   alert("Please complete the CAPTCHA.");
+    // }
   };
+
+  const handleCaptchaVerify = () => {
+    setIsCaptchaVerified(true);
+  };
+
   return (
     <>
       <div className="flex h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-gray-100">
@@ -89,6 +100,11 @@ const Login = () => {
                 />
               </div>
             </div>
+
+            {/* <ReCAPTCHA
+              sitekey="YOUR_RECAPTCHA_SITE_KEY"
+              onChange={handleCaptchaVerify}
+            /> */}
 
             <div>
               <button
