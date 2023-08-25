@@ -12,8 +12,9 @@ import {
 
 const Dashboard = () => {
   const [images, setImages] = useState([]);
-  // const [userDetails, setUserDetails] = useState({});
   const [isMultiple, setIsMultiple] = useState(false);
+  const [uploadImageVisibility, setUploadImageVisibility] = useState(false);
+  const [uploadButtonVisibility, setUploadButtonVisibility] = useState(true);
 
   useEffect(async () => {
     const imagesArr = await getAllImages();
@@ -34,6 +35,11 @@ const Dashboard = () => {
     window.location.href = "/user";
   };
 
+  const handleUploadImageButton = () => {
+    setUploadImageVisibility(true);
+    setUploadButtonVisibility(false);
+  };
+
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
@@ -47,6 +53,8 @@ const Dashboard = () => {
     } catch (error) {
       console.log(error);
       alert("unknown error");
+    } finally {
+      window.location.reload();
     }
   };
 
@@ -69,36 +77,50 @@ const Dashboard = () => {
       </nav>
 
       <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">Upload Image</h2>
-
-        <form onSubmit={handleSubmit} className="mb-8">
-          <label className="block text-gray-700 mb-2">Select Image(s):</label>
-          <div className="flex items-center space-x-4">
-            <input
-              type="file"
-              name="images"
-              accept=".jpg, .jpeg, .png, .gif"
-              className="hidden"
-              id="imageUpload"
-              multiple={isMultiple}
-            />
-            <label
-              htmlFor="imageUpload"
-              className="cursor-pointer bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out"
-            >
-              Choose Image{isMultiple ? "s" : ""}
-            </label>
-            <span className="text-gray-600" id="selectedFileName">
-              No file selected
-            </span>
-          </div>
+        {uploadButtonVisibility && (
           <button
             type="submit"
-            className="bg-gray-800 text-white py-2 px-4 rounded-lg mt-4 hover:bg-gray-700 transition duration-300 ease-in-out"
+            className="bg-gray-800 text-white py-2 px-4 rounded-lg mt-4 hover:bg-gray-700 transition duration-300 ease-in-out mb-8"
+            onClick={handleUploadImageButton}
           >
-            Upload
+            Upload Image
           </button>
-        </form>
+        )}
+        {uploadImageVisibility && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">
+              Upload Image
+            </h2>
+
+            <form onSubmit={handleSubmit} className="mb-8">
+              <label className="block text-gray-700 mb-2">
+                Select Image(s):
+              </label>
+              <div className="flex items-center space-x-4">
+                <input
+                  type="file"
+                  name="images"
+                  accept=".jpg, .jpeg, .png, .gif"
+                  className="hidden"
+                  id="imageUpload"
+                  multiple={isMultiple}
+                />
+                <label
+                  htmlFor="imageUpload"
+                  className="cursor-pointer bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out"
+                >
+                  Choose Image{isMultiple ? "s" : ""}
+                </label>
+              </div>
+              <button
+                type="submit"
+                className="bg-gray-800 text-white py-2 px-4 rounded-lg mt-4 hover:bg-gray-700 transition duration-300 ease-in-out"
+              >
+                Upload
+              </button>
+            </form>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.length > 0 ? (
