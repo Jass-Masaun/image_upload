@@ -18,7 +18,8 @@ const storeImage = async (req, res, next) => {
 
     const imagesToUpload = [];
 
-    req.files.map(async (obj, index) => {
+    for (let i = 0; i < req.files.length; i++) {
+      const obj = req.files[i];
       const { mimetype, buffer, originalname, size } = obj;
 
       const thumbnailBuffer = await generateThumbnailBuffer(buffer);
@@ -31,14 +32,12 @@ const storeImage = async (req, res, next) => {
         buffer,
         thumbnail: thumbnailBuffer,
       });
+    }
 
-      if (req.files.length - 1 === index) {
-        await Image.insertMany(imagesToUpload);
+    await Image.insertMany(imagesToUpload);
 
-        const response = new HttpSuccess("Image uploaded successfully", null);
-        res.status(response.status_code).json(response);
-      }
-    });
+    const response = new HttpSuccess("Image uploaded successfully", null);
+    res.status(response.status_code).json(response);
   } catch (error) {
     next(error);
   }

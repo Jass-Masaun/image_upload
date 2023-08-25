@@ -39,7 +39,9 @@ const getUserDetails = async () => {
 
 const uploadImages = async (payload) => {
   const formData = new FormData();
-  formData.append("images", payload.images);
+  Object.values(payload.images).forEach((image) => {
+    formData.append("images", image);
+  });
 
   try {
     const response = await postData("/image/store", formData, {

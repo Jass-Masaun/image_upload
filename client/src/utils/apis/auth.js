@@ -27,7 +27,6 @@ const loginUser = async (payload) => {
     const responseStatusCode = response?.data?.status_code;
     const responseMessage = response?.data?.message;
     if (responseStatusCode === 200 || responseStatusCode === 201) {
-      alert(responseMessage);
       window?.localStorage?.setItem(
         ACCESS_TOKEN_KEY,
         response?.data?.data?.accessToken

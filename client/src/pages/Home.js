@@ -13,10 +13,23 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-700">Home Page</h1>
-      <Link to="/login">Login</Link>
-      <Link to="/signup">Signup</Link>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <h1 className="text-3xl font-bold mb-4">Welcome to Our Website</h1>
+      <p className="text-gray-600 mb-8">Explore and discover amazing things!</p>
+      <div className="flex space-x-4">
+        <Link
+          to="/login"
+          className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+        >
+          Login
+        </Link>
+        <Link
+          to="/signup"
+          className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-200"
+        >
+          Signup
+        </Link>
+      </div>
     </div>
   );
 };
