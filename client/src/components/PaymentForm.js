@@ -101,6 +101,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           >
             Select
           </button>
+          {payButtonDisabled && <p>Processing please wait...</p>}
         </form>
       ) : (
         <form
@@ -188,6 +189,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           >
             Pay Now
           </button>
+          {payButtonDisabled && <p>Payment is processing please wait...</p>}
         </form>
       )}
     </>

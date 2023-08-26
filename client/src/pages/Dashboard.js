@@ -47,6 +47,10 @@ const Dashboard = () => {
     window.location.href = "/user";
   };
 
+  const handlePlans = async () => {
+    window.location.href = "/plans";
+  };
+
   const handleUploadImageButton = () => {
     setUploadImageVisibility(true);
     setUploadButtonVisibility(false);
@@ -84,7 +88,10 @@ const Dashboard = () => {
   return (
     <>
       <NavBar
-        buttons={[{ name: "User Profile", handleClick: handleUserProfile }]}
+        buttons={[
+          { name: "User Profile", handleClick: handleUserProfile },
+          { name: "Plans", handleClick: handlePlans },
+        ]}
       />
 
       {!apiLoading ? (
@@ -156,7 +163,7 @@ const Dashboard = () => {
 
           {showUploadingStatus && (
             <label className="block text-gray-700 mb-2">
-              Your image{isMultiple ? "s are" : "is"} uploading please wait...
+              Your image{isMultiple ? "s are" : " is"} uploading please wait...
             </label>
           )}
 

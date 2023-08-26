@@ -9,6 +9,7 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import UserDetails from "./pages/User";
+import Plans from "./pages/Plans";
 
 const App = () => {
   return (
@@ -31,6 +32,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <UserDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/plans"
+            element={
+              <ProtectedRoute>
+                <Plans />
               </ProtectedRoute>
             }
           />
