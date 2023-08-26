@@ -1,4 +1,3 @@
-import { ACCESS_TOKEN_KEY } from "../constants";
 import { getData, postData } from "../services";
 
 const getAllImages = async () => {

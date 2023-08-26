@@ -7,9 +7,20 @@ import {
 
 const PaymentForm = ({ planDetails, userDetails }) => {
   const [payButtonDisabled, setPayButtonDisabled] = useState(false);
+  const [userData, setUserData] = useState(userDetails.address);
 
   const stripe = useStripe();
   const elements = useElements();
+
+  const handleInputChange = (e) => {
+    const obj = {};
+
+    obj[e.target.name] = e.target.value;
+    setUserData({
+      ...userData,
+      ...obj,
+    });
+  };
 
   const createSubscription = async (e) => {
     setPayButtonDisabled(true);
@@ -18,11 +29,11 @@ const PaymentForm = ({ planDetails, userDetails }) => {
 
     const formData = new FormData(e.target);
     const address = {
-      line1: formData.get("address_line1"),
-      city: formData.get("address_city"),
-      state: formData.get("address_state"),
-      country: formData.get("address_country"),
-      postal_code: formData.get("address_postal_code"),
+      line1: formData.get("line1"),
+      city: formData.get("city"),
+      state: formData.get("state"),
+      country: formData.get("country"),
+      postal_code: formData.get("postal_code"),
     };
 
     try {
@@ -132,9 +143,10 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <div className="mb-4">
             <input
               type="text"
-              name="address_line1"
+              name="line1"
               placeholder="Address Line 1"
-              value={userDetails.address.line1}
+              value={userData.line1}
+              onChange={handleInputChange}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -142,9 +154,10 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <div className="mb-4">
             <input
               type="text"
-              name="address_city"
+              name="city"
               placeholder="City"
-              value={userDetails.address.city}
+              value={userData.city}
+              onChange={handleInputChange}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -152,9 +165,10 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <div className="mb-4">
             <input
               type="text"
-              name="address_state"
+              name="state"
               placeholder="State"
-              value={userDetails.address.state}
+              value={userData.state}
+              onChange={handleInputChange}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -162,9 +176,10 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <div className="mb-4">
             <input
               type="text"
-              name="address_country"
+              name="country"
               placeholder="Country"
-              value={userDetails.address.country}
+              value={userData.country}
+              onChange={handleInputChange}
               className="w-full p-2 border rounded-lg"
               required
             />
@@ -172,9 +187,10 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <div className="mb-4">
             <input
               type="text"
-              name="address_postal_code"
+              name="postal_code"
               placeholder="Postal Code"
-              value={userDetails.address.postal_code}
+              value={userData.postal_code}
+              onChange={handleInputChange}
               className="w-full p-2 border rounded-lg"
               required
             />

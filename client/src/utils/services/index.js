@@ -49,6 +49,14 @@ const postData = async (endpoint, payload, headers) => {
       window?.localStorage?.removeItem(ACCESS_TOKEN_KEY);
       window.location.href = "/login";
     }
+    if (error?.code === "ERR_NETWORK") {
+      return {
+        data: {
+          message:
+            "because of vercel restriction max body size must be less than 4.5mb",
+        },
+      };
+    }
 
     return error.response;
   }
