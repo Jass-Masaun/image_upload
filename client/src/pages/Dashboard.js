@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import { ACCESS_TOKEN_KEY } from "../utils/constants";
 import {
   getAllImages,
   getUserDetails,
   uploadImages,
 } from "../utils/apis/dashboard";
+
 import Loading from "../components/Loading";
 import NavBar from "../components/NavBar";
-import ImageGrid from "../components/ImageGrid";
 import ImageView from "../components/ImageView";
 
 const Dashboard = () => {
@@ -21,16 +20,21 @@ const Dashboard = () => {
   const [showUploadingStatus, setShowUploadingStatus] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
 
-  useEffect(async () => {
-    const imagesArr = await getAllImages();
-    const userD = await getUserDetails();
-    if (userD.tier !== "free") {
-      console.log("hi");
-      setIsMultiple(true);
-    }
-    // setUserDetails(userD);
-    setImages(imagesArr);
-    setApiLoading(false);
+  useEffect(() => {
+    const handleInitialPageLoad = async () => {
+      const imagesArr = await getAllImages();
+      const userD = await getUserDetails();
+
+      if (userD.tier !== "free") {
+        console.log("hi");
+        setIsMultiple(true);
+      }
+
+      setImages(imagesArr);
+      setApiLoading(false);
+    };
+
+    handleInitialPageLoad();
   }, []);
 
   const handleImageChange = (e) => {

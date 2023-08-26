@@ -22,19 +22,23 @@ const UserDetails = () => {
     "pk_test_51Ni8q6SHl18hJPkqdUsQBF4rvB8cOlJoRy5FyBhJ4ZCaaXb7r7pNVluFK5v044fPv11OAkXat6vlcvW9dnfYN2A900Yl719mGO"
   );
 
-  useEffect(async () => {
-    const userDetailsResult = await getUserDetails();
-    setUserDetails(userDetailsResult);
+  useEffect(() => {
+    const handleInitialPageLoad = async () => {
+      const userDetailsResult = await getUserDetails();
+      setUserDetails(userDetailsResult);
 
-    const plansList = await getAllSubscriptionPlans();
-    setPlans(plansList.plans);
+      const plansList = await getAllSubscriptionPlans();
+      setPlans(plansList.plans);
 
-    plansList.plans.forEach((plan) => {
-      if (plan.selected) {
-        setSelectedPlan(plan.id);
-        setUserPlanDetails(plan);
-      }
-    });
+      plansList.plans.forEach((plan) => {
+        if (plan.selected) {
+          setSelectedPlan(plan.id);
+          setUserPlanDetails(plan);
+        }
+      });
+    };
+
+    handleInitialPageLoad();
   }, []);
 
   const handleSelectPlan = (planId) => {

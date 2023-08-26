@@ -1,10 +1,4 @@
-import {
-  CardElement,
-  PaymentElement,
-  PaymentRequestButtonElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useState } from "react";
 import {
   cancelSubscriptionToPlan,
@@ -12,10 +6,14 @@ import {
 } from "../utils/apis/stripe";
 
 const PaymentForm = ({ planDetails, userDetails }) => {
+  const [payButtonDisabled, setPayButtonDisabled] = useState(false);
+
   const stripe = useStripe();
   const elements = useElements();
 
   const createSubscription = async (e) => {
+    setPayButtonDisabled(true);
+
     e.preventDefault();
 
     const formData = new FormData(e.target);
@@ -64,6 +62,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
   };
 
   const cancelSubscription = async (e) => {
+    setPayButtonDisabled(true);
     try {
       e.preventDefault();
       const response = await cancelSubscriptionToPlan({
@@ -82,112 +81,6 @@ const PaymentForm = ({ planDetails, userDetails }) => {
     }
   };
 
-  // return (
-  //   <>
-  //     {planDetails.amount === "0.00" ? (
-  //       <form
-  //         onSubmit={cancelSubscription}
-  //         className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg"
-  //       >
-  //         <h1 className="text-2xl font-semibold mb-4">
-  //           No need to make payment for free tier Payment
-  //         </h1>
-  //         <button
-  //           type="submit"
-  //           className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
-  //         >
-  //           Select
-  //         </button>
-  //       </form>
-  //     ) : (
-  //       <form
-  //         onSubmit={createSubscription}
-  //         className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg"
-  //       >
-  //         <h1 className="text-2xl font-semibold mb-4">Make a Payment</h1>
-  //         <div className="mb-4">
-  //           <input
-  //             type="text"
-  //             name="name"
-  //             placeholder="Name"
-  //             value={userDetails.fullName}
-  //             className="w-full p-2 border rounded-lg"
-  //             disabled
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <input
-  //             type="email"
-  //             name="email"
-  //             placeholder="Email"
-  //             value={userDetails.email}
-  //             className="w-full p-2 border rounded-lg"
-  //             disabled
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <input
-  //             type="text"
-  //             name="address_line1"
-  //             placeholder="Address Line 1"
-  //             value={userDetails.address.line1}
-  //             className="w-full p-2 border rounded-lg"
-  //             required
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <input
-  //             type="text"
-  //             name="address_city"
-  //             placeholder="City"
-  //             value={userDetails.address.city}
-  //             className="w-full p-2 border rounded-lg"
-  //             required
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <input
-  //             type="text"
-  //             name="address_state"
-  //             placeholder="State"
-  //             value={userDetails.address.state}
-  //             className="w-full p-2 border rounded-lg"
-  //             required
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <input
-  //             type="text"
-  //             name="address_country"
-  //             placeholder="Country"
-  //             value={userDetails.address.country}
-  //             className="w-full p-2 border rounded-lg"
-  //             required
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <input
-  //             type="text"
-  //             name="address_postal_code"
-  //             placeholder="Postal Code"
-  //             value={userDetails.address.postal_code}
-  //             className="w-full p-2 border rounded-lg"
-  //             required
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <CardElement className="p-2 border rounded-lg" />
-  //         </div>
-  //         <button
-  //           type="submit"
-  //           className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
-  //         >
-  //           Pay Now
-  //         </button>
-  //       </form>
-  //     )}
-  //   </>
-  // );
   return (
     <>
       {planDetails.amount === "0.00" ? (
@@ -204,6 +97,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <button
             type="submit"
             className="w-full bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition"
+            disabled={payButtonDisabled}
           >
             Select
           </button>
@@ -290,6 +184,7 @@ const PaymentForm = ({ planDetails, userDetails }) => {
           <button
             type="submit"
             className="w-full bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition"
+            disabled={payButtonDisabled}
           >
             Pay Now
           </button>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 import { ACCESS_TOKEN_KEY } from "../utils/constants";
 
