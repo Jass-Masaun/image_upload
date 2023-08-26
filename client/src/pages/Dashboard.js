@@ -53,23 +53,31 @@ const Dashboard = () => {
   };
 
   const handleSubmit = async (event) => {
+    let reload = true;
     try {
       event.preventDefault();
 
-      setUploadButtonDisabled(true);
-      setShowUploadingStatus(true);
-
       const file = event.currentTarget["images"].files[0];
-      let files = [file];
-      if (isMultiple) {
-        files = event.currentTarget["images"].files;
+
+      if (!file) {
+        reload = false;
+        alert("Please select any image first");
+      } else {
+        setUploadButtonDisabled(true);
+        setShowUploadingStatus(true);
+        let files = [file];
+        if (isMultiple) {
+          files = event.currentTarget["images"].files;
+        }
+        await uploadImages({ images: files });
       }
-      await uploadImages({ images: files });
     } catch (error) {
       console.log(error);
       alert("unknown error");
     } finally {
-      window.location.reload();
+      if (reload) {
+        window.location.reload();
+      }
     }
   };
 

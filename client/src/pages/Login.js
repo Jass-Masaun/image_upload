@@ -3,7 +3,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 import { useAuth } from "../contexts/Auth";
 import { loginUser, verifyCaptcha } from "../utils/apis/auth";
-import { ACCESS_TOKEN_KEY } from "../utils/constants";
+import { ACCESS_TOKEN_KEY, CAPTCHA_SITE_KEY } from "../utils/constants";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -38,6 +38,7 @@ const Login = () => {
   };
 
   const handleCaptchaVerify = async (token) => {
+    setIsCaptchaVerified(true);
     const result = await verifyCaptcha({ token });
 
     if (result) {
@@ -106,7 +107,7 @@ const Login = () => {
             </div>
 
             <ReCAPTCHA
-              sitekey="6Ld889MnAAAAAMg9nUZM1O9thtLa69t7j_faPJGg"
+              sitekey={CAPTCHA_SITE_KEY}
               onChange={handleCaptchaVerify}
             />
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { ACCESS_TOKEN_KEY } from "../utils/constants";
+import { ACCESS_TOKEN_KEY, CAPTCHA_SITE_KEY } from "../utils/constants";
 import { createUser, verifyCaptcha } from "../utils/apis/auth";
 
 const SignUp = () => {
@@ -121,7 +121,7 @@ const SignUp = () => {
             </div>
 
             <ReCAPTCHA
-              sitekey="6Ld889MnAAAAAMg9nUZM1O9thtLa69t7j_faPJGg"
+              sitekey={CAPTCHA_SITE_KEY}
               onChange={handleCaptchaVerify}
             />
 

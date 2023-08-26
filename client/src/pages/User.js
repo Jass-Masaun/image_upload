@@ -10,6 +10,8 @@ import PlanCard from "../components/PlanCard";
 import { getUserDetails } from "../utils/apis/dashboard";
 import { getAllSubscriptionPlans } from "../utils/apis/stripe";
 
+import { STRIPE_PUBLISHABLE_KEY } from "../utils/constants";
+
 const UserDetails = () => {
   const [selectedPlan, setSelectedPlan] = useState("free");
   const [userDetails, setUserDetails] = useState({});
@@ -18,9 +20,7 @@ const UserDetails = () => {
   const [userPlanDetails, setUserPlanDetails] = useState({});
   const [selectedPlanDetails, setSelectedPlanDetails] = useState({});
 
-  const stripePromise = loadStripe(
-    "pk_test_51Ni8q6SHl18hJPkqdUsQBF4rvB8cOlJoRy5FyBhJ4ZCaaXb7r7pNVluFK5v044fPv11OAkXat6vlcvW9dnfYN2A900Yl719mGO"
-  );
+  const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
   useEffect(() => {
     const handleInitialPageLoad = async () => {
