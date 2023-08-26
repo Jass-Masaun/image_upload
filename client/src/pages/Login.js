@@ -4,6 +4,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useAuth } from "../contexts/Auth";
 import { loginUser, verifyCaptcha } from "../utils/apis/auth";
 import { ACCESS_TOKEN_KEY, CAPTCHA_SITE_KEY } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,14 +12,15 @@ const Login = () => {
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const { setAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = window.localStorage.getItem(ACCESS_TOKEN_KEY);
 
     if (token) {
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     }
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +34,8 @@ const Login = () => {
       if (result) {
         setAuthenticated(true);
       }
+
+      navigate("/dashboard");
     } else {
       alert("Please complete the CAPTCHA.");
     }

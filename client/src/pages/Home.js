@@ -1,16 +1,18 @@
 import React, { useEffect } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN_KEY } from "../utils/constants";
 
 const Home = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     const token = window.localStorage.getItem(ACCESS_TOKEN_KEY);
 
     if (token) {
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">

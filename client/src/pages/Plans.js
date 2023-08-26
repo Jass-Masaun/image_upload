@@ -41,10 +41,6 @@ const Plans = () => {
     handleInitialPageLoad();
   }, []);
 
-  const handleUserProfile = async () => {
-    window.location.href = "/user";
-  };
-
   const handleSelectPlan = (planId) => {
     setSelectedPlan(planId);
 
@@ -63,13 +59,12 @@ const Plans = () => {
 
   return (
     <>
-      <NavBar
-        buttons={[{ name: "User Profile", handleClick: handleUserProfile }]}
-      />
+      <NavBar buttons={[{ name: "User Profile", path: "/user" }]} />
       {userPlanDetails.id ? (
         <div className="flex flex-wrap justify-center">
-          {plans.map((plan) => (
+          {plans.map((plan, index) => (
             <PlanCard
+              key={index}
               plan={plan}
               selectedPlan={selectedPlan}
               handleSelectPlan={handleSelectPlan}

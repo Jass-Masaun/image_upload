@@ -16,10 +16,10 @@ const NavBar = ({ buttons }) => {
           Dashboard
         </Link>
         <div className="flex items-center space-x-4">
-          {buttons.map((button) => (
-            <button className="text-white" onClick={button.handleClick}>
+          {buttons.map((button, index) => (
+            <Link key={index} to={button.path} className="text-white">
               {button.name}
-            </button>
+            </Link>
           ))}
           <Link to="/login" className="text-white" onClick={handleLogout}>
             Logout

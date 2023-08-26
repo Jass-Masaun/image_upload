@@ -7,8 +7,6 @@ const createUser = async (payload) => {
     const responseStatusCode = response?.data?.status_code;
     const responseMessage = response?.data?.message;
     if (responseStatusCode === 200 || responseStatusCode === 201) {
-      alert(responseMessage);
-      window.location.href = "/login";
       return true;
     } else {
       alert(responseMessage);
@@ -31,7 +29,6 @@ const loginUser = async (payload) => {
         ACCESS_TOKEN_KEY,
         response?.data?.data?.accessToken
       );
-      window.location.href = "/dashboard";
       return true;
     } else {
       alert(responseMessage);

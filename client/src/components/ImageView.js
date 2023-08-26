@@ -10,7 +10,7 @@ const ImageView = ({ images }) => {
             Your uploaded images
           </h3>
           {images.map((img, index) => (
-            <ImageGrid index={index} img={img} />
+            <ImageGrid key={index} index={index} img={img} />
           ))}
         </>
       ) : (

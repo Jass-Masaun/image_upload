@@ -3,12 +3,15 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 import { ACCESS_TOKEN_KEY, CAPTCHA_SITE_KEY } from "../utils/constants";
 import { createUser, verifyCaptcha } from "../utils/apis/auth";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = window.localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -22,17 +25,22 @@ const SignUp = () => {
     e.preventDefault();
 
     if (isCaptchaVerified) {
-      await createUser({
+      const result = await createUser({
         full_name: fullName,
         email,
         password,
       });
+
+      if (result) {
+        navigate("/login");
+      }
     } else {
       alert("Please complete the CAPTCHA.");
     }
   };
 
   const handleCaptchaVerify = async (token) => {
+    setIsCaptchaVerified(true);
     const result = await verifyCaptcha({ token });
 
     if (result) {

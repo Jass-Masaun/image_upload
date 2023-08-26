@@ -26,7 +26,6 @@ const Dashboard = () => {
       const userD = await getUserDetails();
 
       if (userD.tier !== "free") {
-        console.log("hi");
         setIsMultiple(true);
       }
 
@@ -41,14 +40,6 @@ const Dashboard = () => {
     const files = Array.from(e.target.files);
     const imageUrls = files.map((file) => URL.createObjectURL(file));
     setSelectedImages(imageUrls);
-  };
-
-  const handleUserProfile = async () => {
-    window.location.href = "/user";
-  };
-
-  const handlePlans = async () => {
-    window.location.href = "/plans";
   };
 
   const handleUploadImageButton = () => {
@@ -89,8 +80,8 @@ const Dashboard = () => {
     <>
       <NavBar
         buttons={[
-          { name: "User Profile", handleClick: handleUserProfile },
-          { name: "Plans", handleClick: handlePlans },
+          { name: "User Profile", path: "/user" },
+          { name: "Plans", path: "/plans" },
         ]}
       />
 

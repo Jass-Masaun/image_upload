@@ -5,6 +5,7 @@ import NavBar from "../components/NavBar";
 
 import { getUserDetails } from "../utils/apis/dashboard";
 import { getAllSubscriptionPlans } from "../utils/apis/stripe";
+import { Link } from "react-router-dom";
 
 const UserDetails = () => {
   const [userDetails, setUserDetails] = useState({});
@@ -28,13 +29,9 @@ const UserDetails = () => {
     handleInitialPageLoad();
   }, []);
 
-  const handlePlans = async () => {
-    window.location.href = "/plans";
-  };
-
   return (
     <>
-      <NavBar buttons={[{ name: "Plans", handleClick: handlePlans }]} />
+      <NavBar buttons={[{ name: "Plans", path: "/plans" }]} />
 
       {userPlanDetails.id ? (
         <>
@@ -66,12 +63,12 @@ const UserDetails = () => {
             </div>
           </div>
           <div className="max-w-md mx-auto p-4 bg-white">
-            <button
-              onClick={handlePlans}
+            <Link
+              to="/plans"
               className="w-full bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition"
             >
               Change Plan
-            </button>
+            </Link>
           </div>
         </>
       ) : (
