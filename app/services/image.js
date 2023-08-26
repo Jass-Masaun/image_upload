@@ -3,10 +3,11 @@ const { errors } = require("../handlers/errors");
 const { Image } = require("../models");
 const { getTwoDateDifferenceInMs } = require("../utils/datetime");
 
-const getRecentImageUploadedByUser = async (userId) => {
+const getRecentImageUploadedByUser = async (userId, tier) => {
   const image = await Image.findOne(
     {
       user: userId,
+      user_tier: tier,
     },
     {},
     { sort: { createdAt: -1 }, limit: 1 }
@@ -17,7 +18,7 @@ const getRecentImageUploadedByUser = async (userId) => {
 
 const handleFreeTrierImageUploadCondition = async (user) => {
   if (user.tier === "free") {
-    const image = await getRecentImageUploadedByUser(user.id);
+    const image = await getRecentImageUploadedByUser(user.id, "free");
 
     if (image && image.createdAt) {
       const timeDifferenceInMs = getTwoDateDifferenceInMs(

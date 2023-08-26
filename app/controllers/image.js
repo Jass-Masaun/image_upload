@@ -31,6 +31,7 @@ const storeImage = async (req, res, next) => {
         mimetype,
         buffer,
         thumbnail: thumbnailBuffer,
+        user_tier: user.tier === "free" ? "free" : "monthly",
       });
     }
 

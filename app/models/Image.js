@@ -27,6 +27,9 @@ const imageSchema = mongoose.Schema(
       type: Buffer,
       required: [true, "Thumbnail is required"],
     },
+    user_tier: {
+      type: String,
+    },
   },
   {
     timestamps: true,
