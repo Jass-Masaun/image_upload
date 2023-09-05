@@ -1,4 +1,4 @@
-const { Image } = require("../models");
+const { Image, User, Plan } = require("../models");
 
 const { HttpSuccess, HttpError } = require("../handlers/apiResponse");
 const { errors } = require("../handlers/errors");
@@ -117,6 +117,19 @@ const getAllImages = async (req, res, next) => {
         created_at: createdAt,
       };
     });
+
+    const plan = await Plan.findById(id);
+
+    if (plan && plan?.expire_on) {
+      if (Date.now() >= plan.expire_on) {
+        plan.current = false;
+        plan.is_cancelled = true;
+        plan.expire_on = undefined;
+        await plan.save();
+
+        await User.findByIdAndUpdate(id, { tier: "free" });
+      }
+    }
 
     const response = new HttpSuccess("Images list", { images: result });
     res.status(response.status_code).json(response);

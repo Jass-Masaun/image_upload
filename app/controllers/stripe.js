@@ -172,13 +172,14 @@ const cancelSubscription = async (req, res, next) => {
       throw new HttpError("User not subscribed to this plan", name, [], code);
     }
 
-    plan.current = false;
-    plan.is_cancelled = true;
+    const subscriptionObject = await stripe.subscriptions.cancel(
+      plan.subscription_id
+    );
+
+    const subscriptionExpireDate = subscriptionObject.current_period_end;
+
+    plan.expire_on = subscriptionExpireDate;
     await plan.save();
-
-    await User.findByIdAndUpdate(id, { tier: "free" });
-
-    await stripe.subscriptions.cancel(plan.subscription_id);
 
     const response = new HttpSuccess("User unsubscribed to plan", null);
     res.status(response.status_code).json(response);

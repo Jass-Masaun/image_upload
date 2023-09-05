@@ -38,6 +38,9 @@ const planSchema = mongoose.Schema(
     is_cancelled: {
       type: Boolean,
     },
+    expire_on: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
